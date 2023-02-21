@@ -1,0 +1,36 @@
+services:
+  mysql-container:
+    image: mysql:8.0.31
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: sdd
+      MYSQL_ROOT_PASSWORD: gabi
+
+  backend:
+    build:
+      context: demo
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      DB_URL: jdbc:mysql://mysql-container/sdd
+      DB_DATABASE: sdd
+      DB_USER: root
+      DB_PASSWORD: gabi
+      DB_ROOT_PASSWORD: gabi
+    depends_on:
+      - mysql-container
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - 80:3000
+    depends_on:
+      - backend
+
+volumes:
+  db:
+
